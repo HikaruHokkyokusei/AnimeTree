@@ -1,4 +1,4 @@
-package Models
+package MALModels
 
 type AlternativeTitles struct {
 	En       *string   `json:"en"`
