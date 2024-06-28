@@ -6,7 +6,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	MAL "github.com/HikaruHokkyokusei/AnimeTree/MAL"
+	"github.com/HikaruHokkyokusei/AnimeTree/MAL"
 )
 
 var (
@@ -15,7 +15,7 @@ var (
 )
 
 func logic() {
-	malClient := MAL.BuildMALClient(malClientId, malClientSecret)
+	malClient := MyAnimeListSDK.BuildClient(malClientId, malClientSecret)
 	fmt.Println(malClient)
 }
 
@@ -47,6 +47,6 @@ func main() {
 }
 
 func shutdownHandler() {
-	MAL.Exit()
+	MyAnimeListSDK.Exit()
 	os.Exit(0)
 }

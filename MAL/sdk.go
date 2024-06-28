@@ -1,4 +1,4 @@
-package mal_sdk
+package MyAnimeListSDK
 
 import (
 	"context"
@@ -12,13 +12,16 @@ import (
 	Fiber "github.com/gofiber/fiber/v2"
 	UUID "github.com/google/uuid"
 	PKCE "github.com/nirasan/go-oauth-pkce-code-verifier"
-	MAL "github.com/nstratos/go-myanimelist/mal"
 	Browser "github.com/pkg/browser"
 	OAuth2 "golang.org/x/oauth2"
 )
 
 var AuthFile *os.File
 var AuthToken *OAuth2.Token
+
+type MyAnimeListClient struct {
+	client *http.Client
+}
 
 func generateAuthServerAndURL(authConfig OAuth2.Config, callbackPath string, codeQueryKey string, tokenChannel chan *OAuth2.Token) (*Fiber.App, string, error) {
 	state, err := UUID.NewV7()
@@ -96,7 +99,7 @@ func authenticateUserViaServer(authConfig OAuth2.Config, serverPortNumber string
 	return token, nil
 }
 
-func BuildMALClient(clientId string, clientSecret string) *MAL.Client {
+func BuildClient(clientId string, clientSecret string) MyAnimeListClient {
 	MALAuthConfig := OAuth2.Config{
 		ClientID:     clientId,
 		ClientSecret: clientSecret,
@@ -118,7 +121,7 @@ func BuildMALClient(clientId string, clientSecret string) *MAL.Client {
 		AuthToken = authToken
 	}
 
-	return MAL.NewClient(MALAuthConfig.Client(context.Background(), AuthToken))
+	return MyAnimeListClient{client: MALAuthConfig.Client(context.Background(), AuthToken)}
 }
 
 func init() {
