@@ -4,16 +4,17 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
+	"os"
+	"time"
+
 	Fiber "github.com/gofiber/fiber/v2"
 	UUID "github.com/google/uuid"
 	PKCE "github.com/nirasan/go-oauth-pkce-code-verifier"
 	MAL "github.com/nstratos/go-myanimelist/mal"
 	Browser "github.com/pkg/browser"
 	OAuth2 "golang.org/x/oauth2"
-	"io"
-	"net/http"
-	"os"
-	"time"
 )
 
 var AuthFile *os.File
