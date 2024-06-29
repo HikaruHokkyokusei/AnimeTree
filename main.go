@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"os/signal"
@@ -16,7 +17,9 @@ var (
 
 func logic() {
 	malClient := MyAnimeListSDK.BuildClient(malClientId, malClientSecret)
-	fmt.Println(malClient)
+	anime, _ := malClient.GetAnime(918)
+	animeJson, _ := json.MarshalIndent(anime, "", "  ")
+	fmt.Println(string(animeJson))
 }
 
 func init() {
