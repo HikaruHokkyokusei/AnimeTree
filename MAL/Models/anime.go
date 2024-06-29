@@ -21,9 +21,25 @@ type Picture struct {
 	Medium *string `json:"medium"`
 }
 
-type AnimeNode struct {
-	Node               *Anime `json:"node"`
-	NumRecommendations *int64 `json:"num_recommendations"`
+type MyListStatus struct {
+	FinishDate         *string `json:"finish_date"`
+	IsRewatching       *bool   `json:"is_rewatching"`
+	NumEpisodesWatched *int64  `json:"num_episodes_watched"`
+	Score              *int64  `json:"score"`
+	StartDate          *string `json:"start_date"`
+	Status             *string `json:"status"`
+	UpdatedAt          *string `json:"updated_at"`
+}
+
+type RecommendationNode struct {
+	Node               *AnimeNode `json:"node"`
+	NumRecommendations *int64     `json:"num_recommendations"`
+}
+
+type RelatedAnimeNode struct {
+	Node                  *AnimeNode `json:"node"`
+	RelationType          *string    `json:"relation_type"`
+	RelationTypeFormatted *string    `json:"relation_type_formatted"`
 }
 
 type StartSession struct {
@@ -36,10 +52,9 @@ type Studio struct {
 	Name *string `json:"name"`
 }
 
-type Anime struct {
+type AnimeNode struct {
 	AlternativeTitles      *AlternativeTitles `json:"alternative_titles"`
 	AverageEpisodeDuration *int64             `json:"average_episode_duration"`
-	Broadcast              *Broadcast         `json:"broadcast"`
 	CreatedAt              *string            `json:"created_at"`
 	EndDate                *string            `json:"end_date"`
 	Genres                 *[]Genre           `json:"genres"`
@@ -47,23 +62,40 @@ type Anime struct {
 	MainPicture            *Picture           `json:"main_picture"`
 	Mean                   *float64           `json:"mean"`
 	MediaType              *string            `json:"media_type"`
-	NSFW                   *string            `json:"nsfw"`
-	NumEpisodes            *int64             `json:"num_episodes"`
-	NumFavorites           *int64             `json:"num_favorites"`
-	NumListUsers           *int64             `json:"num_list_users"`
-	NumScoringUsers        *int64             `json:"num_scoring_users"`
-	Pictures               *[]Picture         `json:"pictures"`
-	Popularity             *int64             `json:"popularity"`
-	Rank                   *int64             `json:"rank"`
-	Rating                 *string            `json:"rating"`
-	Recommendations        *[]AnimeNode       `json:"recommendations"`
-	RelatedAnime           *[]AnimeNode       `json:"related_anime"`
-	Source                 *string            `json:"source"`
+	MyListStatus           *MyListStatus      `json:"my_list_status"`
 	StartDate              *string            `json:"start_date"`
-	StartSession           *StartSession      `json:"start_session"`
-	Status                 *string            `json:"status"`
-	Studios                *[]Studio          `json:"studios"`
-	Synopsis               *string            `json:"synopsis"`
 	Title                  *string            `json:"title"`
-	UpdatedAt              *string            `json:"updated_at"`
+}
+
+type Anime struct {
+	AlternativeTitles      *AlternativeTitles    `json:"alternative_titles"`
+	AverageEpisodeDuration *int64                `json:"average_episode_duration"`
+	Broadcast              *Broadcast            `json:"broadcast"`
+	CreatedAt              *string               `json:"created_at"`
+	EndDate                *string               `json:"end_date"`
+	Genres                 *[]Genre              `json:"genres"`
+	Id                     *int64                `json:"id"`
+	MainPicture            *Picture              `json:"main_picture"`
+	Mean                   *float64              `json:"mean"`
+	MediaType              *string               `json:"media_type"`
+	MyListStatus           *MyListStatus         `json:"my_list_status"`
+	NSFW                   *string               `json:"nsfw"`
+	NumEpisodes            *int64                `json:"num_episodes"`
+	NumFavorites           *int64                `json:"num_favorites"`
+	NumListUsers           *int64                `json:"num_list_users"`
+	NumScoringUsers        *int64                `json:"num_scoring_users"`
+	Pictures               *[]Picture            `json:"pictures"`
+	Popularity             *int64                `json:"popularity"`
+	Rank                   *int64                `json:"rank"`
+	Rating                 *string               `json:"rating"`
+	Recommendations        *[]RecommendationNode `json:"recommendations"`
+	RelatedAnime           *[]RelatedAnimeNode   `json:"related_anime"`
+	Source                 *string               `json:"source"`
+	StartDate              *string               `json:"start_date"`
+	StartSession           *StartSession         `json:"start_session"`
+	Status                 *string               `json:"status"`
+	Studios                *[]Studio             `json:"studios"`
+	Synopsis               *string               `json:"synopsis"`
+	Title                  *string               `json:"title"`
+	UpdatedAt              *string               `json:"updated_at"`
 }
