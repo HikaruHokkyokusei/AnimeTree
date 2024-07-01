@@ -15,6 +15,11 @@ type MyListStatus struct {
 	UpdatedAt          *string `json:"updated_at,omitempty"`
 }
 
+type StartSession struct {
+	Season *string `json:"season,omitempty"`
+	Year   *int64  `json:"year,omitempty"`
+}
+
 type SubAnimeNode struct {
 	AlternativeTitles      *AlternativeTitles `json:"alternative_titles,omitempty"`
 	AverageEpisodeDuration *int64             `json:"average_episode_duration,omitempty"`
@@ -28,11 +33,6 @@ type SubAnimeNode struct {
 	MyListStatus           *MyListStatus      `json:"my_list_status,omitempty"`
 	StartDate              *string            `json:"start_date,omitempty"`
 	Title                  *string            `json:"title,omitempty"`
-}
-
-type StartSession struct {
-	Season *string `json:"season,omitempty"`
-	Year   *int64  `json:"year,omitempty"`
 }
 
 type Anime struct {

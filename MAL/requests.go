@@ -2,6 +2,7 @@ package MyAnimeListSDK
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	URL "net/url"
@@ -51,15 +52,15 @@ func buildRequest(method Method, path string, queryParams map[string]string, req
 	return req, err
 }
 
-func (c MyAnimeListClient) request(method Method, path string, queryParams map[string]string, reqBody string) (*map[string]any, int, error) {
+func (c MyAnimeListClient) request(method Method, path string, queryParams map[string]string, reqBody string) (*map[string]any, error) {
 	req, err := buildRequest(method, path, queryParams, reqBody)
 	if err != nil {
-		return nil, -1, err
+		return nil, err
 	}
 
 	resp, err := c.client.Do(req)
 	if err != nil {
-		return nil, 0, err
+		return nil, err
 	}
 	defer func(resp *http.Response) {
 		_ = resp.Body.Close()
@@ -67,8 +68,19 @@ func (c MyAnimeListClient) request(method Method, path string, queryParams map[s
 
 	body := &map[string]any{}
 	if err := json.NewDecoder(resp.Body).Decode(body); err != nil {
-		return nil, resp.StatusCode, err
+		return nil, err
 	}
 
-	return body, resp.StatusCode, nil
+	if statusCode := resp.StatusCode; statusCode != 200 {
+		errFormat := fmt.Sprint("Response status code: ", statusCode)
+		if val, ok := (*body)["error"]; ok && val != "" {
+			errFormat = fmt.Sprint(errFormat, ". Error: ", val)
+		}
+		if val, ok := (*body)["message"]; ok && val != "" {
+			errFormat = fmt.Sprint(errFormat, ". Message: ", val)
+		}
+		return nil, fmt.Errorf(errFormat)
+	}
+
+	return body, nil
 }

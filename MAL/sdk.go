@@ -35,7 +35,7 @@ func generateAuthServerAndURL(authConfig OAuth2.Config, callbackPath string, cod
 	}
 	pkceChallengeCode := pkceVerifierCode.CodeChallengePlain()
 
-	server := Fiber.New()
+	server := Fiber.New(Fiber.Config{DisableStartupMessage: true})
 	server.Get(callbackPath, func(ctx *Fiber.Ctx) error {
 		code := ctx.Query(codeQueryKey)
 		if code == "" {

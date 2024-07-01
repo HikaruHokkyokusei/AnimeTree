@@ -16,20 +16,15 @@ type Picture struct {
 	Medium *string `json:"medium,omitempty"`
 }
 
-type RelatedEntityNode[SubEntityNode SubAnimeNode | SubMangaNode] struct {
-	Node                  *SubEntityNode `json:"node,omitempty"`
-	RelationType          *string        `json:"relation_type,omitempty"`
-	RelationTypeFormatted *string        `json:"relation_type_formatted,omitempty"`
-}
-
 type RecommendationNode[SubEntityNode SubAnimeNode | SubMangaNode] struct {
 	Node               *SubEntityNode `json:"node,omitempty"`
 	NumRecommendations *int64         `json:"num_recommendations,omitempty"`
 }
 
-type ResponsePaging struct {
-	Next     *string `json:"next,omitempty"`
-	Previous *string `json:"previous,omitempty"`
+type RelatedEntityNode[SubEntityNode SubAnimeNode | SubMangaNode] struct {
+	Node                  *SubEntityNode `json:"node,omitempty"`
+	RelationType          *string        `json:"relation_type,omitempty"`
+	RelationTypeFormatted *string        `json:"relation_type_formatted,omitempty"`
 }
 
 type ResponsePage[Entity Anime | Manga] struct {
@@ -37,4 +32,9 @@ type ResponsePage[Entity Anime | Manga] struct {
 		Node Entity `json:"node,omitempty"`
 	} `json:"data,omitempty"`
 	Paging *ResponsePaging `json:"paging,omitempty"`
+}
+
+type ResponsePaging struct {
+	Next     *string `json:"next,omitempty"`
+	Previous *string `json:"previous,omitempty"`
 }

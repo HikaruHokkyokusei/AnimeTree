@@ -24,6 +24,7 @@ var (
 		"title",
 	}
 	animeFieldsTier2 = []string{
+		"background",
 		"broadcast",
 		"nsfw",
 		"num_episodes",
@@ -45,6 +46,7 @@ var (
 		"recommendations{%s}",
 		"related_anime{%s}",
 	}
+	nilAnime = MALModels.Anime{}
 )
 
 func getAllFieldsForAnime() string {
@@ -54,35 +56,58 @@ func getAllFieldsForAnime() string {
 	return strings.Join([]string{t1, t2, t3}, ",")
 }
 
-func (c MyAnimeListClient) GetAnime(animeId int64) (*MALModels.Anime, error) {
-	resp, statusCode, err := c.request(
-		GET,
-		fmt.Sprintf("/anime/%d", animeId),
+func getAnimeList(animeDataPage MALModels.ResponsePage[MALModels.Anime]) []MALModels.Anime {
+	var animeList []MALModels.Anime
+	for _, node := range *animeDataPage.Data {
+		animeList = append(animeList, node.Node)
+	}
+	return animeList
+}
+
+func (c MyAnimeListClient) GetAnime(animeId int64) (MALModels.Anime, error) {
+	resp, err := c.request(
+		GET, fmt.Sprintf("/anime/%d", animeId),
 		map[string]string{
 			"fields": getAllFieldsForAnime(),
-		},
-		"",
+		}, "",
+	)
+	if err != nil {
+		return nilAnime, err
+	}
+
+	if temp, err := json.Marshal(resp); err == nil {
+		anime := MALModels.Anime{}
+		return anime, json.Unmarshal(temp, &anime)
+	} else {
+		return nilAnime, err
+	}
+}
+
+func (c MyAnimeListClient) SearchAnime(animeName string, limit int64, offset int64) ([]MALModels.Anime, error) {
+	if limit < MinResultListSize || limit > MaxResultListSize {
+		limit = DefaultResultListSize
+	}
+
+	resp, err := c.request(
+		GET, "/anime",
+		map[string]string{
+			"q":      animeName,
+			"limit":  fmt.Sprintf("%d", limit),
+			"offset": fmt.Sprintf("%d", offset),
+			"fields": getAllFieldsForAnime(),
+		}, "",
 	)
 	if err != nil {
 		return nil, err
 	}
 
-	if statusCode != 200 {
-		errFormat := fmt.Sprint("Response status code: ", statusCode)
-		if val, ok := (*resp)["error"]; ok {
-			errFormat = fmt.Sprint(errFormat, ". Error: ", val)
+	animeList := MALModels.ResponsePage[MALModels.Anime]{}
+	if temp, err := json.Marshal(resp); err == nil {
+		if err := json.Unmarshal(temp, &animeList); err != nil {
+			return nil, err
 		}
-		if val, ok := (*resp)["message"]; ok {
-			errFormat = fmt.Sprint(errFormat, ". Message: ", val)
-		}
-		return nil, fmt.Errorf(errFormat)
-	}
-
-	temp, err := json.Marshal(resp)
-	if err != nil {
+		return getAnimeList(animeList), nil
+	} else {
 		return nil, err
 	}
-
-	anime := &MALModels.Anime{}
-	return anime, json.Unmarshal(temp, anime)
 }
