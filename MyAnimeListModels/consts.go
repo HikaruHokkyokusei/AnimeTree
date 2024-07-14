@@ -1,4 +1,4 @@
-package MALModels
+package MyAnimeListModels
 
 import (
 	"reflect"

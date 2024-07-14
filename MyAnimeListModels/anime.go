@@ -1,4 +1,4 @@
-package MALModels
+package MyAnimeListModels
 
 type Broadcast struct {
 	DayOfTheWeek *string `json:"day_of_the_week,omitempty"`

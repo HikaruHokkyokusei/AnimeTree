@@ -1,12 +1,9 @@
-package MyAnimeListSDK
+package sdk
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
-	"os"
 	"time"
 
 	Fiber "github.com/gofiber/fiber/v2"
@@ -14,14 +11,9 @@ import (
 	PKCE "github.com/nirasan/go-oauth-pkce-code-verifier"
 	Browser "github.com/pkg/browser"
 	OAuth2 "golang.org/x/oauth2"
+
+	MALWrappers "github.com/HikaruHokkyokusei/MAL-SDK/MyAnimeListWrappers"
 )
-
-var AuthFile *os.File
-var AuthToken *OAuth2.Token
-
-type MyAnimeListClient struct {
-	client *http.Client
-}
 
 func generateAuthServerAndURL(authConfig OAuth2.Config, callbackPath string, codeQueryKey string, tokenChannel chan *OAuth2.Token) (*Fiber.App, string, error) {
 	state, err := UUID.NewV7()
@@ -99,7 +91,7 @@ func authenticateUserViaServer(authConfig OAuth2.Config, serverPortNumber string
 	return token, nil
 }
 
-func BuildClient(clientId string, clientSecret string) MyAnimeListClient {
+func BuildClient(clientId string, clientSecret string, authTokenHolder *OAuth2.Token) (MALWrappers.MyAnimeListClient, *OAuth2.Token) {
 	MALAuthConfig := OAuth2.Config{
 		ClientID:     clientId,
 		ClientSecret: clientSecret,
@@ -112,46 +104,14 @@ func BuildClient(clientId string, clientSecret string) MyAnimeListClient {
 		RedirectURL: "http://localhost:8080/callback",
 	}
 
-	if AuthToken == nil {
-		authToken, err := authenticateUserViaServer(MALAuthConfig, "8080")
+	if authTokenHolder == nil {
+		newAuthToken, err := authenticateUserViaServer(MALAuthConfig, "8080")
 		fmt.Println("Authentication Successful")
 		if err != nil {
 			panic(err)
 		}
-		AuthToken = authToken
+		authTokenHolder = newAuthToken
 	}
 
-	return MyAnimeListClient{client: MALAuthConfig.Client(context.Background(), AuthToken)}
-}
-
-func init() {
-	var err error
-
-	if AuthFile, err = os.OpenFile("./authToken.store", os.O_CREATE|os.O_RDWR, 0755); err != nil {
-		panic("Unable to access auth store file")
-	}
-
-	buffer, err := io.ReadAll(AuthFile)
-	if len(buffer) > 0 && json.Valid(buffer) {
-		AuthToken = &OAuth2.Token{}
-		err := json.Unmarshal(buffer, AuthToken)
-		if err != nil {
-			panic(err)
-		}
-	}
-}
-
-func Exit() {
-	if AuthToken != nil {
-		authToken, err := json.MarshalIndent(AuthToken, "", "  ")
-
-		if err == nil {
-			_ = AuthFile.Truncate(0)
-			_, _ = AuthFile.Seek(0, 0)
-			_, _ = AuthFile.Write(authToken)
-			_, _ = AuthFile.Write([]byte("\n"))
-		}
-	}
-
-	_ = AuthFile.Close()
+	return MALWrappers.MyAnimeListClient{Client: MALAuthConfig.Client(context.Background(), authTokenHolder)}, authTokenHolder
 }

@@ -1,11 +1,11 @@
-package MyAnimeListSDK
+package MyAnimeListWrappers
 
 import (
 	"encoding/json"
 	"fmt"
 	"net/http"
 
-	MALModels "github.com/HikaruHokkyokusei/AnimeTree/MAL/Models"
+	MALModels "github.com/HikaruHokkyokusei/MAL-SDK/MyAnimeListModels"
 )
 
 var (

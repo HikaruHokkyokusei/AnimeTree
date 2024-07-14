@@ -1,4 +1,4 @@
-package MyAnimeListSDK
+package MyAnimeListWrappers
 
 type (
 	MalAnimeSeason       = string

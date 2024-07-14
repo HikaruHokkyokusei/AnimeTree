@@ -1,4 +1,4 @@
-package MyAnimeListSDK
+package MyAnimeListWrappers
 
 import (
 	"encoding/json"
@@ -8,8 +8,12 @@ import (
 	URL "net/url"
 	"strings"
 
-	MALModels "github.com/HikaruHokkyokusei/AnimeTree/MAL/Models"
+	MALModels "github.com/HikaruHokkyokusei/MAL-SDK/MyAnimeListModels"
 )
+
+type MyAnimeListClient struct {
+	Client *http.Client
+}
 
 var (
 	baseURL, _ = URL.Parse("https://api.myanimelist.net")
@@ -50,7 +54,7 @@ func (c MyAnimeListClient) request(method string, path string, queryParams map[s
 		return nil, err
 	}
 
-	resp, err := c.client.Do(req)
+	resp, err := c.Client.Do(req)
 	if err != nil {
 		return nil, err
 	}

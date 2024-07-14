@@ -1,4 +1,4 @@
-package MALModels
+package MyAnimeListModels
 
 type AlternativeTitles struct {
 	En       *string   `json:"en,omitempty"`

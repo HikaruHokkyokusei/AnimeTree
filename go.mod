@@ -1,4 +1,4 @@
-module github.com/HikaruHokkyokusei/AnimeTree
+module github.com/HikaruHokkyokusei/MAL-SDK
 
 go 1.22
 
