@@ -12,14 +12,6 @@ var (
 	nilAnime = MALModels.Anime{}
 )
 
-func convertIntoAnimeList(animeDataPage MALModels.ResponsePage[MALModels.Anime]) []MALModels.Anime {
-	var animeList []MALModels.Anime
-	for _, node := range *animeDataPage.Data {
-		animeList = append(animeList, node.Node)
-	}
-	return animeList
-}
-
 func (c MyAnimeListClient) GetAnime(animeId int64) (MALModels.Anime, error) {
 	resp, err := c.request(
 		http.MethodGet, fmt.Sprintf("/anime/%d", animeId),
@@ -62,14 +54,93 @@ func (c MyAnimeListClient) SearchAnime(animeName string, limit int64, offset int
 		if err := json.Unmarshal(temp, &animeList); err != nil {
 			return nil, err
 		}
-		return convertIntoAnimeList(animeList), nil
+		return convertIntoEntityList(animeList), nil
 	} else {
 		return nil, err
 	}
 }
 
-func (c MyAnimeListClient) GetAnimeRanking() ([]MALModels.Anime, error) { return nil, nil }
+func (c MyAnimeListClient) GetAnimeRanking(rankingCategory AnimeRankingCategory, limit int64, offset int64) ([]MALModels.Anime, error) {
+	if limit < MinResultListSize || limit > MaxResultListSize {
+		limit = DefaultResultListSize
+	}
 
-func (c MyAnimeListClient) GetSeasonalAnime() ([]MALModels.Anime, error) { return nil, nil }
+	resp, err := c.request(
+		http.MethodGet, "/anime/ranking",
+		map[string]string{
+			"ranking_type": rankingCategory,
+			"limit":        fmt.Sprintf("%d", limit),
+			"offset":       fmt.Sprintf("%d", offset),
+			"fields":       MALModels.AllAnimeFields(),
+		}, "",
+	)
+	if err != nil {
+		return nil, err
+	}
 
-func (c MyAnimeListClient) GetSuggestedAnime() ([]MALModels.Anime, error) { return nil, nil }
+	animeList := MALModels.ResponsePage[MALModels.Anime]{}
+	if temp, err := json.Marshal(resp); err == nil {
+		if err := json.Unmarshal(temp, &animeList); err != nil {
+			return nil, err
+		}
+		return convertIntoEntityList(animeList), nil
+	} else {
+		return nil, err
+	}
+}
+
+func (c MyAnimeListClient) GetSeasonalAnime(year int64, season MalAnimeSeason, limit int64, offset int64) ([]MALModels.Anime, error) {
+	if limit < MinResultListSize || limit > MaxResultListSize {
+		limit = DefaultResultListSize
+	}
+
+	resp, err := c.request(
+		http.MethodGet, fmt.Sprintf("/anime/season/%d/%s", year, season),
+		map[string]string{
+			"limit":  fmt.Sprintf("%d", limit),
+			"offset": fmt.Sprintf("%d", offset),
+			"fields": MALModels.AllAnimeFields(),
+		}, "",
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	animeList := MALModels.ResponsePage[MALModels.Anime]{}
+	if temp, err := json.Marshal(resp); err == nil {
+		if err := json.Unmarshal(temp, &animeList); err != nil {
+			return nil, err
+		}
+		return convertIntoEntityList(animeList), nil
+	} else {
+		return nil, err
+	}
+}
+
+func (c MyAnimeListClient) GetSuggestedAnime(limit int64, offset int64) ([]MALModels.Anime, error) {
+	if limit < MinResultListSize || limit > MaxResultListSize {
+		limit = DefaultResultListSize
+	}
+
+	resp, err := c.request(
+		http.MethodGet, "/anime/suggestions",
+		map[string]string{
+			"limit":  fmt.Sprintf("%d", limit),
+			"offset": fmt.Sprintf("%d", offset),
+			"fields": MALModels.AllAnimeFields(),
+		}, "",
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	animeList := MALModels.ResponsePage[MALModels.Anime]{}
+	if temp, err := json.Marshal(resp); err == nil {
+		if err := json.Unmarshal(temp, &animeList); err != nil {
+			return nil, err
+		}
+		return convertIntoEntityList(animeList), nil
+	} else {
+		return nil, err
+	}
+}

@@ -7,6 +7,8 @@ import (
 	"net/http"
 	URL "net/url"
 	"strings"
+
+	MALModels "github.com/HikaruHokkyokusei/AnimeTree/MAL/Models"
 )
 
 var (
@@ -73,4 +75,12 @@ func (c MyAnimeListClient) request(method string, path string, queryParams map[s
 	}
 
 	return body, nil
+}
+
+func convertIntoEntityList[Entity MALModels.Anime | MALModels.Manga](animeDataPage MALModels.ResponsePage[Entity]) []Entity {
+	var animeList []Entity
+	for _, node := range *animeDataPage.Data {
+		animeList = append(animeList, node.Node)
+	}
+	return animeList
 }
