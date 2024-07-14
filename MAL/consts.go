@@ -30,3 +30,15 @@ const (
 	AnimeRankingPopularity AnimeRankingCategory = "bypopularity"
 	AnimeRankingFavorite   AnimeRankingCategory = "favorite"
 )
+
+const (
+	MangaRankingAll        MangaRankingCategory = "all"
+	MangaRankingManga      MangaRankingCategory = "manga"
+	MangaRankingNovels     MangaRankingCategory = "novels"
+	MangaRankingOneShots   MangaRankingCategory = "oneshots"
+	MangaRankingDoujin     MangaRankingCategory = "doujin"
+	MangaRankingManhwa     MangaRankingCategory = "manhwa"
+	MangaRankingManhua     MangaRankingCategory = "manhua"
+	MangaRankingPopularity MangaRankingCategory = "bypopularity"
+	MangaRankingFavorite   MangaRankingCategory = "favorite"
+)
