@@ -3,6 +3,7 @@ package MyAnimeListSDK
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 
 	MALModels "github.com/HikaruHokkyokusei/AnimeTree/MAL/Models"
 )
@@ -13,7 +14,7 @@ var (
 
 func (c MyAnimeListClient) GetManga(mangaId int64) (MALModels.Manga, error) {
 	resp, err := c.request(
-		GET, fmt.Sprintf("/manga/%d", mangaId),
+		http.MethodGet, fmt.Sprintf("/manga/%d", mangaId),
 		map[string]string{
 			"fields": MALModels.AllMangaFields(),
 		}, "",

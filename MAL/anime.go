@@ -3,6 +3,7 @@ package MyAnimeListSDK
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 
 	MALModels "github.com/HikaruHokkyokusei/AnimeTree/MAL/Models"
 )
@@ -11,7 +12,7 @@ var (
 	nilAnime = MALModels.Anime{}
 )
 
-func getAnimeList(animeDataPage MALModels.ResponsePage[MALModels.Anime]) []MALModels.Anime {
+func convertIntoAnimeList(animeDataPage MALModels.ResponsePage[MALModels.Anime]) []MALModels.Anime {
 	var animeList []MALModels.Anime
 	for _, node := range *animeDataPage.Data {
 		animeList = append(animeList, node.Node)
@@ -21,7 +22,7 @@ func getAnimeList(animeDataPage MALModels.ResponsePage[MALModels.Anime]) []MALMo
 
 func (c MyAnimeListClient) GetAnime(animeId int64) (MALModels.Anime, error) {
 	resp, err := c.request(
-		GET, fmt.Sprintf("/anime/%d", animeId),
+		http.MethodGet, fmt.Sprintf("/anime/%d", animeId),
 		map[string]string{
 			"fields": MALModels.AllAnimeFields(),
 		}, "",
@@ -44,7 +45,7 @@ func (c MyAnimeListClient) SearchAnime(animeName string, limit int64, offset int
 	}
 
 	resp, err := c.request(
-		GET, "/anime",
+		http.MethodGet, "/anime",
 		map[string]string{
 			"q":      animeName,
 			"limit":  fmt.Sprintf("%d", limit),
@@ -61,8 +62,14 @@ func (c MyAnimeListClient) SearchAnime(animeName string, limit int64, offset int
 		if err := json.Unmarshal(temp, &animeList); err != nil {
 			return nil, err
 		}
-		return getAnimeList(animeList), nil
+		return convertIntoAnimeList(animeList), nil
 	} else {
 		return nil, err
 	}
 }
+
+func (c MyAnimeListClient) GetAnimeRanking() ([]MALModels.Anime, error) { return nil, nil }
+
+func (c MyAnimeListClient) GetSeasonalAnime() ([]MALModels.Anime, error) { return nil, nil }
+
+func (c MyAnimeListClient) GetSuggestedAnime() ([]MALModels.Anime, error) { return nil, nil }

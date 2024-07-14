@@ -14,16 +14,6 @@ var (
 	pathPrefix = "v2"
 )
 
-type Method string
-
-var (
-	GET    Method = "GET"
-	POST   Method = "POST"
-	PUT    Method = "PUT"
-	PATCH  Method = "PATCH"
-	DELETE Method = "DELETE"
-)
-
 func buildReqURL(path string, queryParams map[string]string) string {
 	newUrl := baseURL.JoinPath(pathPrefix, path)
 
@@ -36,7 +26,7 @@ func buildReqURL(path string, queryParams map[string]string) string {
 	return newUrl.String()
 }
 
-func buildRequest(method Method, path string, queryParams map[string]string, reqBody string) (*http.Request, error) {
+func buildRequest(method string, path string, queryParams map[string]string, reqBody string) (*http.Request, error) {
 	url := buildReqURL(path, queryParams)
 
 	var bodyReader io.Reader
@@ -44,7 +34,7 @@ func buildRequest(method Method, path string, queryParams map[string]string, req
 		bodyReader = strings.NewReader(reqBody)
 	}
 
-	req, err := http.NewRequest(string(method), url, bodyReader)
+	req, err := http.NewRequest(method, url, bodyReader)
 	if err == nil && bodyReader != nil {
 		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	}
@@ -52,7 +42,7 @@ func buildRequest(method Method, path string, queryParams map[string]string, req
 	return req, err
 }
 
-func (c MyAnimeListClient) request(method Method, path string, queryParams map[string]string, reqBody string) (*map[string]any, error) {
+func (c MyAnimeListClient) request(method string, path string, queryParams map[string]string, reqBody string) (*map[string]any, error) {
 	req, err := buildRequest(method, path, queryParams, reqBody)
 	if err != nil {
 		return nil, err
